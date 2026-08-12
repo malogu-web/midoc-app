@@ -1,0 +1,93 @@
+You are an AI coding agent working in a **Next.js 14** codebase using **App Router**, **TypeScript**, and **Tailwind CSS** for a product that handles **medical data** (PHI/PII). Follow these rules strictly.
+
+## Stack & project conventions
+- Use **Next.js App Router**: `app/` directory, `layout.tsx`, `page.tsx`, route segments, `loading.tsx`, `error.tsx`, `not-found.tsx`.
+- Prefer **React Server Components (RSC)** by default. Only add `"use client"` when required (event handlers, state, effects, browser APIs).
+- Use **TypeScript** everywhere. Enable/assume `strict: true`. No `any` unless there is a compelling reason and it's contained with runtime validation.
+- Styling with **Tailwind**:
+  - Keep class lists readable (group by layout/spacing/typography/colors).
+  - Prefer composing UI with components rather than repeating long class strings.
+  - Avoid inline styles except for dynamic values not expressible in Tailwind.
+
+## Data handling: medical security baseline (PHI/PII)
+- Treat all patient identifiers and clinical data as **sensitive**. Minimize collection, storage, and exposure.
+- **Never** log PHI/PII (names, DOB, MRN, diagnoses, lab results, addresses, emails, phone numbers) to:
+  - console logs (server or client)
+  - analytics events
+  - error trackers
+  - network request logs
+  - build output
+- **No PHI/PII in the client** unless it is essential for the UI:
+  - Do not embed PHI in HTML, page props, or client component props unless required.
+  - Prefer server rendering of sensitive views and use masked displays when possible.
+- Apply **least privilege**:
+  - Use role-based access control (RBAC) and, when applicable, record-level authorization checks.
+  - Every route handler / server action that reads or writes PHI must verify the user and authorize access.
+- Use **encryption**:
+  - Assume TLS in transit; do not add non-TLS endpoints.
+  - For at-rest, rely on the database/platform encryption; for especially sensitive fields, use application-level encryption if required by architecture.
+- Use **auditability**:
+  - For create/read/update/delete of sensitive records, emit an audit event (no PHI in the event payload; use opaque identifiers).
+
+## Authentication, sessions, and authorization
+- Prefer **httpOnly, secure cookies** for sessions. Avoid storing tokens in `localStorage` or exposing them to client JS.
+- Enforce CSRF protections for state-changing operations where relevant:
+  - For cookie-authenticated POSTs, consider CSRF tokens and same-site cookie settings.
+- Always validate authorization **server-side** (UI gates are not security).
+
+## API and server-side patterns (App Router)
+- Prefer **Route Handlers** in `app/api/**/route.ts` for APIs.
+- Use **Server Actions** carefully:
+  - Validate inputs rigorously.
+  - Do not return PHI unnecessarily.
+  - Handle errors without leaking internal details.
+- Validate all external inputs with a schema validator (e.g., Zod) before use.
+- Never trust `searchParams`, headers, cookies, or request bodies without validation.
+
+## Input validation and output encoding
+- Validate on the server:
+  - types, ranges, formats, enums
+  - file uploads: size, type, scanning strategy (if applicable)
+- Prevent injection:
+  - Use parameterized queries / ORM.
+  - Avoid string concatenation in SQL.
+  - Sanitize rich text if you ever render HTML (prefer plain text).
+- Prevent XSS:
+  - Do not use `dangerouslySetInnerHTML` with untrusted content.
+  - Encode/escape user-provided content by default (React already does; don’t bypass it).
+
+## Error handling, observability, and privacy
+- Errors shown to users must be generic and non-sensitive.
+- Server logs must include:
+  - request ID / trace ID
+  - user ID (opaque)
+  - resource ID (opaque)
+  - outcome (success/fail)
+  - **never PHI**
+- When adding telemetry/analytics, ensure events contain no PHI and are opt-in when required.
+
+## Performance & caching (safety first)
+- Be cautious with caching when PHI is involved:
+  - Avoid caching personalized PHI pages publicly.
+  - Use `cache: "no-store"` or appropriate Next cache controls for sensitive responses.
+  - Do not use `revalidate`/static rendering for PHI unless data is strictly non-sensitive and access-controlled.
+
+## Secrets and configuration
+- Never hardcode secrets or credentials.
+- Use environment variables (`process.env.*`) for secrets and endpoints.
+- Do not commit `.env*` files.
+- When writing examples, use placeholders like `NEXTAUTH_SECRET`, `DATABASE_URL`, `ENCRYPTION_KEY`.
+
+## Code quality rules
+- Keep modules small and cohesive. Prefer pure functions for business logic.
+- Add types for API contracts. Reuse shared types carefully; never share PHI-heavy types to the client unless necessary.
+- When creating forms:
+  - Do client-side validation for UX, but enforce validation on the server as the source of truth.
+  - Avoid storing sensitive values in query strings.
+
+## Output requirements for the assistant
+- Propose changes that match this stack (Next 14 + App Router + TS + Tailwind).
+- When implementing any feature touching PHI:
+  - explicitly mention where authorization happens
+  - explicitly mention how inputs are validated
+  - ensure logs and errors do not leak PHI

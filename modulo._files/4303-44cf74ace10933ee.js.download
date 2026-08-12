@@ -1,0 +1,407 @@
+"use strict";(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[4303],{34303:(e,t,r)=>{r.d(t,{gs:()=>p,rV:()=>w});var a=r(54568),n=r(23353),o=r(36640),s=r(72835),l=r(74717),c=r(7620),i=r(23700),d=r(61800);function p(e,t){return!!e&&t.nonce===e.nonce&&(e.resolve(t),!0)}function h(e){return e.length<=1e4?e:e.slice(0,1e4).replace(/[\ud800-\udbff]$/,"")+"…"}let u=new WeakSet,g=c.forwardRef(({content:e,onScreenshot:t,chartTheme:r},p)=>{let[g,w]=(0,c.useState)([]),f=(0,c.useRef)(null),m=(0,n.pc)(f,p),b=(0,c.useRef)(r);(0,c.useEffect)(()=>{let e=f.current,t=()=>{let t=e?.contentDocument;if(!t)return;let a=t.getElementById("claude-chart-theme");if(!r)return void a?.remove();let n=a;n||((n=t.createElement("style")).id="claude-chart-theme",(t.head??t.documentElement).appendChild(n)),n.textContent=`:root {
+${(0,d.Sy)(r)} }`};return t(),e?.addEventListener("load",t),()=>e?.removeEventListener("load",t)},[r,e]),(0,c.useEffect)(()=>{let e=f.current?.contentWindow;e&&u.add(e)},[e]),(0,c.useEffect)(()=>{let e=e=>{if(!e.source||!u.has(e.source))return;if(e.source!==f.current?.contentWindow){let t=e.data,r=t&&"object"==typeof t?t.type:void 0;if("console"!==r&&"screenshotData"!==r&&"screenshotError"!==r)return}if(e.origin!==window.location.origin)return;let r=e.data;if(r&&"screenshotData"===r.type&&t?.({success:!0,screenshot:r.data,nonce:r.nonce}),r&&"screenshotError"===r.type&&t?.({success:!1,error:r.error,nonce:r.nonce}),r&&"console"===r.type&&null!==r.message&&void 0!==r.message){let e=function(e){try{if("string"==typeof e)return e;if(null===e||"object"!=typeof e)return h(String(e));if(ArrayBuffer.isView(e)&&e.byteLength>1e4)return h(Object.prototype.toString.call(e));let t=1e4,r=JSON.stringify(e,(e,r)=>{if((t-=e.length+1)<0)throw Error("budget");if(ArrayBuffer.isView(r)&&r.byteLength>1e4){let e=h(Object.prototype.toString.call(r));if((t-=e.length+1)<0)throw Error("budget");return e}if("string"==typeof r&&(t-=r.length),t<0)throw Error("budget");return r});return h(r??Object.prototype.toString.call(e))}catch{try{return h(Object.prototype.toString.call(e))}catch{return"[unserializable]"}}}(r.message);""!==e&&w(t=>[...t,e])}if(r&&"claudeComplete"===r.type&&window.claude.complete(r.prompt).then(e=>{f.current?.contentWindow?.postMessage({type:"claudeComplete",completion:e,id:r.id},window.location.origin)}).catch(e=>{f.current?.contentWindow?.postMessage({type:"claudeComplete",error:e instanceof Error?e.message:String(e),id:r.id},window.location.origin)}),r&&"openExternal"===r.type&&window.claude.openExternal(r.href),r&&"downloadFile"===r.type&&window.claude.downloadFile(r),r&&"proxyFetch"===r.type){let{channelId:e}=r;fetch(r.url,r.init).then(async t=>{if(f.current?.contentWindow?.postMessage({type:"proxyFetchResponse",id:r.id,headers:Object.fromEntries(t.headers.entries()),status:t.status,statusText:t.statusText},window.location.origin),t.body&&e){let r=t.body.getReader();try{let t=!1;for(;!t;){let a=await r.read();(t=a.done)?f.current?.contentWindow?.postMessage({type:"proxyFetchStream",channelId:e,done:!0},window.location.origin):a.value&&f.current?.contentWindow?.postMessage({type:"proxyFetchStream",channelId:e,chunk:a.value.buffer},window.location.origin,[a.value.buffer])}}catch(t){f.current?.contentWindow?.postMessage({type:"proxyFetchStream",channelId:e,error:t instanceof Error?t.message:String(t)},window.location.origin)}finally{r.releaseLock()}}else!t.body&&e&&f.current?.contentWindow?.postMessage({type:"proxyFetchStream",channelId:e,done:!0},window.location.origin)}).catch(e=>{f.current?.contentWindow?.postMessage({type:"proxyFetchResponse",id:r.id,error:e instanceof Error?e.message:String(e)},window.location.origin)})}r&&"storageGet"===r.type?window.storage.get(r.key,r.shared).then(e=>{f.current?.contentWindow?.postMessage({type:"storageGet",result:e,id:r.id},window.location.origin)}).catch(e=>{f.current?.contentWindow?.postMessage({type:"storageGet",error:e instanceof Error?e.message:String(e),id:r.id},window.location.origin)}):r&&"storageSet"===r.type?window.storage.set(r.key,r.value,r.shared).then(e=>{f.current?.contentWindow?.postMessage({type:"storageSet",result:e,id:r.id},window.location.origin)}).catch(e=>{f.current?.contentWindow?.postMessage({type:"storageSet",error:e instanceof Error?e.message:String(e),id:r.id},window.location.origin)}):r&&"storageDelete"===r.type?window.storage.delete(r.key,r.shared).then(e=>{f.current?.contentWindow?.postMessage({type:"storageDelete",result:e,id:r.id},window.location.origin)}).catch(e=>{f.current?.contentWindow?.postMessage({type:"storageDelete",error:e instanceof Error?e.message:String(e),id:r.id},window.location.origin)}):r&&"storageList"===r.type&&window.storage.list(r.prefix,r.shared).then(e=>{f.current?.contentWindow?.postMessage({type:"storageList",result:e,id:r.id},window.location.origin)}).catch(e=>{f.current?.contentWindow?.postMessage({type:"storageList",error:e instanceof Error?e.message:String(e),id:r.id},window.location.origin)})};return window.addEventListener("message",e),()=>window.removeEventListener("message",e)},[t]);let y=`
+    <script>
+      (function() {
+        // Capture host references before any artifact code runs: Window.parent
+        // is [Replaceable] (a top-level \`var parent\` in artifact code would
+        // replace the accessor with a data property), and a top-level
+        // \`const crypto\` would shadow the global — either would otherwise
+        // silently break the bridge for artifacts that worked before.
+        const realParent = window.parent;
+        const cryptoObj = window.crypto;
+        // html-to-image is only used by takeScreenshot: fetched on first use, not as a
+        // parser-blocking tag. Native fetch, captured before the proxy override below.
+        const realFetch = typeof window.fetch === 'function' ? window.fetch.bind(window) : null;
+        const HTML_TO_IMAGE_SRC = "https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.13/html-to-image.min.js";
+        const HTML_TO_IMAGE_INTEGRITY = "sha512-iZ2ORl595Wx6miw+GuadDet4WQbdSWS3JLMoNfY8cRGoEFy6oT3G9IbcrBeL6AfkgpA51ETt/faX6yLV+/gFJg==";
+        let htmlToImageLoad = null;
+        const loadHtmlToImage = () => {
+          if (!htmlToImageLoad) {
+            htmlToImageLoad = (realFetch
+              ? realFetch(HTML_TO_IMAGE_SRC, { integrity: HTML_TO_IMAGE_INTEGRITY, credentials: 'omit', referrerPolicy: 'no-referrer' })
+              : Promise.reject(new Error('fetch unavailable'))
+            )
+              .then((res) => {
+                if (!res.ok) throw new Error('html-to-image failed to load (' + res.status + ')');
+                return res.text();
+              })
+              .then((source) => {
+                // UMD bundle: hide the artifact's AMD/CommonJS globals so it takes the
+                // window-global branch; inline script text runs synchronously on insert.
+                const hidden = ['define', 'module', 'exports'].map((k) => {
+                  const entry = { k, own: Object.prototype.hasOwnProperty.call(window, k), v: window[k] };
+                  try { window[k] = undefined; } catch (e) {}
+                  return entry;
+                });
+                try {
+                  const el = document.createElement('script');
+                  el.text = source;
+                  (document.head || document.documentElement).appendChild(el);
+                } finally {
+                  hidden.forEach(({ k, own, v }) => {
+                    try { if (own) { window[k] = v; } else { delete window[k]; } } catch (e) {}
+                  });
+                }
+                if (!window.htmlToImage) throw new Error('html-to-image unavailable after load');
+                return window.htmlToImage;
+              });
+            // A failed load may be transient; let the next screenshot retry.
+            htmlToImageLoad.catch(() => { htmlToImageLoad = null; });
+          }
+          return htmlToImageLoad;
+        };
+        // crypto.randomUUID exists only in Secure Contexts; fall back to a
+        // unique non-crypto id elsewhere (http://LAN-IP dev flows) —
+        // uniqueness is what the bridge needs, unpredictability is
+        // defense-in-depth on top of the source guards.
+        const newRequestId =
+          cryptoObj && typeof cryptoObj.randomUUID === "function"
+            ? function () { return cryptoObj.randomUUID(); }
+            : function () { return Date.now() + "-" + Math.random(); };
+        const originalConsole = window.console;
+        window.console = {
+          log: (...args) => {
+            originalConsole.log(...args);
+            realParent.postMessage({ type: 'console', message: args.join(' ') }, '*');
+          },
+          error: (...args) => {
+            originalConsole.error(...args);
+            realParent.postMessage({ type: 'console', message: 'Error: ' + args.join(' ') }, '*');
+          },
+          warn: (...args) => {
+            originalConsole.warn(...args);
+            realParent.postMessage({ type: 'console', message: 'Warning: ' + args.join(' ') }, '*');
+          }
+        };
+
+        // Bridge request ids are crypto-random (not sequential) so they
+        // cannot be predicted by other frames in the tab.
+        let callbacksMap = new Map();
+        let streamControllers = new Map();
+        
+        window.claude = {
+          complete: (prompt) => {
+            return new Promise((resolve, reject) => {
+              const id = newRequestId();
+              callbacksMap.set(id, { resolve, reject });
+              realParent.postMessage({ type: 'claudeComplete', id, prompt }, '*');
+            });
+          }
+        };
+
+        window.storage = {
+          get: (key, shared = false) => {
+            return new Promise((resolve, reject) => {
+              const id = newRequestId();
+              callbacksMap.set(id, { resolve, reject });
+              realParent.postMessage({ type: 'storageGet', id, key, shared }, '*');
+            });
+          },
+          set: (key, value, shared = false) => {
+            return new Promise((resolve, reject) => {
+              const id = newRequestId();
+              callbacksMap.set(id, { resolve, reject });
+              realParent.postMessage({ type: 'storageSet', id, key, value, shared }, '*');
+            });
+          },
+          delete: (key, shared = false) => {
+            return new Promise((resolve, reject) => {
+              const id = newRequestId();
+              callbacksMap.set(id, { resolve, reject });
+              realParent.postMessage({ type: 'storageDelete', id, key, shared }, '*');
+            });
+          },
+          list: (prefix, shared = false) => {
+            return new Promise((resolve, reject) => {
+              const id = newRequestId();
+              callbacksMap.set(id, { resolve, reject });
+              realParent.postMessage({ type: 'storageList', id, prefix, shared }, '*');
+            });
+          }
+        };
+
+        let pendingBlobs = new Map();
+        URL.createObjectURL = (blob) => {
+          // Store the blob and create an ID and URL for it
+          const blobId = \`blob-\${Date.now()}-\${Math.random()}\`;
+          pendingBlobs.set(blobId, blob);
+          return \`blob-request://\${blobId}\`;
+        };
+
+        URL.revokeObjectURL = (url) => {
+          // Remove the blob from our store
+          const blobId = url.replace("blob-request://", "");
+          pendingBlobs.delete(blobId);
+        };
+
+        const getBlobFromURL = (url) => {
+          const blobId = url.replace("blob-request://", "");
+          return pendingBlobs.get(blobId);
+        };
+
+        // Override global fetch with streaming support
+        window.fetch = (url, init = {}) => {
+          return new Promise((resolve, reject) => {
+            const id = newRequestId();
+            const channelId = \`fetch-\${id}-\${Date.now()}\`;
+            
+            callbacksMap.set(id, { 
+              resolve: (response) => {
+                // Null-body statuses: Response(stream, {status: 204}) throws
+                // per the Fetch spec, which would escape this resolver and
+                // hang the artifact's await forever.
+                if (response.status === 204 || response.status === 205 || response.status === 304) {
+                  try {
+                    resolve(new Response(null, {
+                      status: response.status,
+                      statusText: response.statusText,
+                      headers: response.headers
+                    }));
+                  } catch (err) {
+                    // Invalid statusText/header bytes can throw here too.
+                    reject(new TypeError(
+                      'Bridge fetch: unconstructable response (status ' + response.status + ')'
+                    ));
+                  }
+                  return;
+                }
+                // Create a ReadableStream for the response body
+                const stream = new ReadableStream({
+                  start(controller) {
+                    streamControllers.set(channelId, controller);
+                  },
+                  cancel() {
+                    streamControllers.delete(channelId);
+                  }
+                });
+                
+                // Create and return the Response with the stream. Response()
+                // requires status in [200, 599]; an opaque/no-cors fetch
+                // forwards status 0, which would throw here and escape the
+                // resolver, hanging the artifact's await. Surface it as a
+                // network-error-shaped rejection instead.
+                try {
+                  resolve(new Response(stream, {
+                    status: response.status,
+                    statusText: response.statusText,
+                    headers: response.headers
+                  }));
+                } catch (err) {
+                  streamControllers.delete(channelId);
+                  reject(new TypeError(
+                    'Bridge fetch: unconstructable response (status ' + response.status + ')'
+                  ));
+                }
+              },
+              reject,
+              channelId
+            });
+            
+            realParent.postMessage({
+              type: 'proxyFetch',
+              id,
+              url,
+              init,
+              channelId
+            }, '*');
+          });
+        };
+
+        window.addEventListener('message', async (event) => {
+          // Only the embedding parent may drive the bridge — sibling and
+          // nested frames can also postMessage into this window.
+          if (event.source !== realParent) return;
+          if (event.data.type === 'takeScreenshot') {
+            // Echo the request's nonce so the requester can correlate the
+            // reply to ITS request — a reply without the expected nonce
+            // (e.g. from a stale pre-remount artifact) is ignored upstream.
+            const screenshotNonce = event.data.nonce;
+            const rootElement = document.getElementById('artifacts-component-root-html');
+            if (!rootElement) {
+              realParent.postMessage({
+                type: 'screenshotError',
+                nonce: screenshotNonce,
+                error: new Error('Root element not found'),
+              }, '*');
+              return;
+            }
+            // Catch CDN load failures and toPng errors so the parent always
+            // gets a response instead of hanging forever.
+            try {
+              const htmlToImage = await loadHtmlToImage();
+              const screenshot = await htmlToImage.toPng(rootElement, {
+                imagePlaceholder:
+                  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdjePDgwX8ACOQDoNsk0PMAAAAASUVORK5CYII=",
+              });
+              realParent.postMessage({
+                type: 'screenshotData',
+                nonce: screenshotNonce,
+                data: screenshot,
+              }, '*');
+            } catch (err) {
+              realParent.postMessage({
+                type: 'screenshotError',
+                nonce: screenshotNonce,
+                error: err instanceof Error ? err : new Error(String(err)),
+              }, '*');
+            }
+          } else if (event.data.type === 'claudeComplete') {
+            const callback = callbacksMap.get(event.data.id);
+            if (!callback) return;
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+            } else {
+              callback.resolve(event.data.completion);
+            }
+            callbacksMap.delete(event.data.id);
+          } else if (event.data.type === 'proxyFetchResponse') {
+            const callback = callbacksMap.get(event.data.id);
+            if (!callback) return;
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+              callbacksMap.delete(event.data.id);
+            } else {
+              // Initial response with headers, status, etc.
+              callback.resolve({
+                status: event.data.status,
+                statusText: event.data.statusText,
+                headers: event.data.headers
+              });
+              // Don't delete the callback yet if streaming
+              if (!event.data.body) {
+                callbacksMap.delete(event.data.id);
+              }
+            }
+          } else if (event.data.type === 'proxyFetchStream') {
+            // Handle streaming data chunks
+            const controller = streamControllers.get(event.data.channelId);
+            if (controller) {
+              if (event.data.error) {
+                controller.error(new Error(event.data.error));
+                streamControllers.delete(event.data.channelId);
+              } else if (event.data.done) {
+                controller.close();
+                streamControllers.delete(event.data.channelId);
+                // Clean up the callback
+                const callback = Array.from(callbacksMap.entries()).find(
+                  ([_, value]) => value.channelId === event.data.channelId
+                );
+                if (callback) {
+                  callbacksMap.delete(callback[0]);
+                }
+              } else if (event.data.chunk) {
+                controller.enqueue(new Uint8Array(event.data.chunk));
+              }
+            }
+          } else if (event.data.type === 'storageGet') {
+            const callback = callbacksMap.get(event.data.id);
+            if (!callback) return;
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+            } else {
+              callback.resolve(event.data.result);
+            }
+            callbacksMap.delete(event.data.id);
+          } else if (event.data.type === 'storageSet') {
+            const callback = callbacksMap.get(event.data.id);
+            if (!callback) return;
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+            } else {
+              callback.resolve(event.data.result);
+            }
+            callbacksMap.delete(event.data.id);
+          } else if (event.data.type === 'storageDelete') {
+            const callback = callbacksMap.get(event.data.id);
+            if (!callback) return;
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+            } else {
+              callback.resolve(event.data.result);
+            }
+            callbacksMap.delete(event.data.id);
+          } else if (event.data.type === 'storageList') {
+            const callback = callbacksMap.get(event.data.id);
+            if (!callback) return;
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+            } else {
+              callback.resolve(event.data.result);
+            }
+            callbacksMap.delete(event.data.id);
+          }
+        });
+
+        window.addEventListener('click', (event) => {
+          const isEl = event.target instanceof HTMLElement;
+          if (!isEl) return;
+    
+          // find ancestor links
+          const linkEl = event.target.closest("a");
+          if (!linkEl || !linkEl.href) return;
+    
+          event.preventDefault();
+          event.stopImmediatePropagation();
+    
+          if (linkEl.href.startsWith("blob-request:")) {
+            const blob = getBlobFromURL(linkEl.href);
+            if (!blob) return;
+            void blob.arrayBuffer().then((data) => {
+              realParent.postMessage({
+                type: "downloadFile",
+                filename: linkEl.download,
+                data,
+                mimeType: blob.type || "application/octet-stream",
+              });
+            });
+          } else if (linkEl.href.startsWith("data:")) {
+            const [header, base64Data] = linkEl.href.split(",");
+            const mimeMatch = header.match(/data:([^;]+)/);
+            const mimeType = mimeMatch ? mimeMatch[1] : "application/octet-stream";
+            const binaryString = atob(base64Data);
+            const data = Uint8Array.from(binaryString, (c) =>
+              c.charCodeAt(0),
+            ).buffer;
+            realParent.postMessage({
+              type: "downloadFile",
+              filename: linkEl.download,
+              data,
+              mimeType,
+            });
+          } else {
+            let linkUrl;
+            try {
+              linkUrl = new URL(linkEl.href);
+            } catch (error) {
+              return;
+            }
+    
+            if (linkUrl.hostname === window.location.hostname) return;
+      
+            realParent.postMessage({
+              type: 'openExternal',
+              href: linkEl.href,
+            }, '*');
+          }
+      });
+
+        const originalOpen = window.open;
+        window.open = function (url) {
+          realParent.postMessage({
+            type: "openExternal",
+            href: url,
+          }, "*");
+        };
+
+        window.addEventListener('error', (event) => {
+          realParent.postMessage({ type: 'console', message: 'Uncaught Error: ' + event.message }, '*');
+        });
+      })();
+    </script>
+  `,v=b.current,k=v?`
+    <style id="claude-chart-theme">
+      :root {
+${(0,d.Sy)(v)}
+      }
+    </style>
+  `:"",E=/<head(\s[^>]*)?>/i,M=E.test(e)?e.replace(E,e=>`${e}${y}${k}`):`${y}${k}${e}`;return M=M.replace(/<body(\s[^>]*)?>/i,e=>{let t=e.slice(5,-1);return`<body${t} id="artifacts-component-root-html">`}),(0,a.jsxs)(i.ResizablePanelGroup,{direction:"vertical",className:"h-screen",children:[(0,a.jsx)(i.ResizablePanel,{defaultSize:g.length>0?80:100,children:(0,a.jsx)("iframe",{ref:m,className:"h-full w-full",title:"Rendered HTML content",sandbox:"allow-scripts allow-same-origin",allow:"clipboard-write",srcDoc:M},e)}),g.length>0&&(0,a.jsxs)(a.Fragment,{children:[(0,a.jsx)(i.ResizableHandle,{withHandle:!0}),(0,a.jsx)(i.ResizablePanel,{defaultSize:20,children:(0,a.jsxs)("div",{className:"h-full overflow-auto p-4",style:{backgroundColor:"hsl(60 1.8% 22%)",backgroundImage:"linear-gradient(hsl(60 3.3% 17.8%), hsl(45 4.9% 16.1%))"},children:[(0,a.jsxs)("div",{className:"mb-2 inline-flex items-center gap-2 rounded-lg border px-2 py-1",style:{borderColor:"hsl(50 5.9% 40%)",color:"hsl(47 8.4% 79%)"},children:[(0,a.jsx)(o.A,{size:12}),(0,a.jsx)("h2",{className:"gap-2 font-ui text-xs",children:"Console Messages"})]}),g.map((e,t)=>{let r=null,n={},o={color:"hsl(50 23.1% 94.9%)"};return e.startsWith("Error:")||e.startsWith("Uncaught Error:")?(r=(0,a.jsx)(s.A,{size:12,className:"mt-1 shrink-0 text-red-500"}),n={backgroundColor:"rgba(255, 0, 0, 0.1)"},o.color="hsl(5 69.4% 72.9%)"):e.startsWith("Warning:")&&(r=(0,a.jsx)(l.A,{size:12,className:"mt-1 shrink-0 text-yellow-500"}),n={backgroundColor:"rgba(255, 255, 0, 0.1)"},o.color="hsl(18 50.4% 47.5%)"),(0,a.jsxs)("div",{className:"mb-0.5 flex items-start gap-2 rounded-lg px-2 py-1",style:n,children:[(0,a.jsx)(a.Fragment,{children:r}),(0,a.jsx)("pre",{className:"flex-grow text-wrap font-mono text-sm",style:o,children:e})]},t)})]})})]})]})});g.displayName="UnsafeHtmlRenderer";let w=c.memo(g)}}]);

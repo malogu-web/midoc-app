@@ -1,0 +1,839 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #0b1020;
+        --card: rgba(255, 255, 255, 0.08);
+        --cardBorder: rgba(255, 255, 255, 0.12);
+        --text: rgba(255, 255, 255, 0.92);
+        --muted: rgba(255, 255, 255, 0.68);
+        --danger: #ff5a7a;
+        --ok: #2de38a;
+        --brand1: #7c3aed;
+        --brand2: #06b6d4;
+        --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+        --radius: 18px;
+        --ring: 0 0 0 4px rgba(124, 58, 237, 0.32);
+        --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+          "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        font-family: var(--font);
+        background: radial-gradient(1200px 700px at 18% 16%, rgba(124, 58, 237, 0.35), transparent 60%),
+          radial-gradient(900px 600px at 80% 20%, rgba(6, 182, 212, 0.25), transparent 55%),
+          radial-gradient(1000px 700px at 50% 90%, rgba(45, 227, 138, 0.18), transparent 55%),
+          linear-gradient(180deg, #070a12 0%, #0b1020 100%);
+        color: var(--text);
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+
+      .shell {
+        width: min(980px, 100%);
+        display: grid;
+        grid-template-columns: 1.1fr 1fr;
+        gap: 22px;
+        align-items: stretch;
+      }
+
+      @media (max-width: 920px) {
+        .shell {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .hero,
+      .card {
+        border-radius: var(--radius);
+        border: 1px solid var(--cardBorder);
+        background: var(--card);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+
+      .hero {
+        padding: 26px 26px 22px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: -2px;
+        background: radial-gradient(600px 240px at 20% 10%, rgba(124, 58, 237, 0.55), transparent 70%),
+          radial-gradient(520px 240px at 75% 20%, rgba(6, 182, 212, 0.45), transparent 70%);
+        opacity: 0.55;
+        pointer-events: none;
+      }
+
+      .hero > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      .badge {
+        display: inline-flex;
+        gap: 10px;
+        align-items: center;
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(0, 0, 0, 0.16);
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 99px;
+        background: linear-gradient(135deg, var(--brand1), var(--brand2));
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.18);
+      }
+
+      h1 {
+        margin: 14px 0 10px;
+        font-size: clamp(26px, 3vw, 36px);
+        line-height: 1.08;
+        letter-spacing: -0.02em;
+      }
+
+      .lead {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.55;
+        max-width: 60ch;
+      }
+
+      .features {
+        margin-top: 18px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      @media (max-width: 560px) {
+        .features {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .feat {
+        padding: 12px 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(0, 0, 0, 0.12);
+        display: grid;
+        gap: 2px;
+      }
+
+      .feat b {
+        font-size: 13px;
+        letter-spacing: 0.01em;
+      }
+
+      .feat span {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.4;
+      }
+
+      .card {
+        padding: 22px;
+        overflow: hidden;
+      }
+
+      .cardHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .cardHeader h2 {
+        margin: 0;
+        font-size: 18px;
+        letter-spacing: -0.01em;
+      }
+
+      .cardHeader a {
+        color: rgba(255, 255, 255, 0.78);
+        text-decoration: none;
+        font-size: 13px;
+      }
+
+      .cardHeader a:hover {
+        text-decoration: underline;
+      }
+
+      form {
+        display: grid;
+        gap: 12px;
+      }
+
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      @media (max-width: 560px) {
+        .grid2 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      label {
+        display: grid;
+        gap: 6px;
+      }
+
+      .labelRow {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 10px;
+      }
+
+      .labelRow span {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.84);
+      }
+
+      .hint {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .inputWrap {
+        position: relative;
+        display: grid;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(0, 0, 0, 0.22);
+        color: var(--text);
+        outline: none;
+        transition: box-shadow 150ms ease, border-color 150ms ease, transform 150ms ease;
+      }
+
+      input::placeholder {
+        color: rgba(255, 255, 255, 0.42);
+      }
+
+      input:focus {
+        border-color: rgba(124, 58, 237, 0.6);
+        box-shadow: var(--ring);
+      }
+
+      .iconBtn {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(0, 0, 0, 0.16);
+        color: rgba(255, 255, 255, 0.82);
+        border-radius: 12px;
+        padding: 8px 10px;
+        cursor: pointer;
+        font-size: 12px;
+        line-height: 1;
+      }
+
+      .iconBtn:hover {
+        background: rgba(0, 0, 0, 0.22);
+      }
+
+      .row {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+      }
+
+      .row input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        margin-top: 2px;
+        accent-color: var(--brand1);
+      }
+
+      .row p {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.76);
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
+      .row a {
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      .strength {
+        display: grid;
+        gap: 6px;
+        margin-top: -2px;
+      }
+
+      .meter {
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        overflow: hidden;
+      }
+
+      .meter > div {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, var(--danger), #ffbf00, var(--ok));
+        transition: width 220ms ease;
+      }
+
+      .strengthText {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .errors {
+        display: none;
+        padding: 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 90, 122, 0.35);
+        background: rgba(255, 90, 122, 0.12);
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      .errors[data-visible="true"] {
+        display: block;
+      }
+
+      .errors ul {
+        margin: 0;
+        padding-left: 18px;
+      }
+
+      .actions {
+        display: grid;
+        gap: 10px;
+        margin-top: 2px;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        cursor: pointer;
+        color: var(--text);
+        background: rgba(0, 0, 0, 0.18);
+        transition: transform 120ms ease, background 120ms ease, border-color 120ms ease, opacity 120ms ease;
+        font-weight: 650;
+        letter-spacing: 0.01em;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+        border-color: rgba(255, 255, 255, 0.22);
+      }
+
+      .btnPrimary {
+        border: none;
+        background: linear-gradient(135deg, var(--brand1), var(--brand2));
+      }
+
+      .btnPrimary:hover {
+        opacity: 0.96;
+      }
+
+      .btn[disabled] {
+        cursor: not-allowed;
+        opacity: 0.55;
+        transform: none;
+      }
+
+      .fineprint {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 18px;
+        transform: translateX(-50%);
+        width: min(680px, calc(100% - 24px));
+        padding: 12px 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        display: none;
+        gap: 10px;
+        align-items: flex-start;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      }
+
+      .toast[data-visible="true"] {
+        display: flex;
+      }
+
+      .toast strong {
+        display: block;
+        font-size: 13px;
+        margin-bottom: 2px;
+      }
+
+      .toast p {
+        margin: 0;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.82);
+        line-height: 1.35;
+      }
+
+      .toast .pill {
+        flex: none;
+        margin-top: 2px;
+        font-size: 12px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(0, 0, 0, 0.18);
+        color: rgba(255, 255, 255, 0.85);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero" aria-label="Información">
+        <div class="badge"><span class="dot" aria-hidden="true"></span> Registro seguro</div>
+        <h1>Crea tu cuenta en minutos.</h1>
+        <p class="lead">
+          Una pantalla de registro completa, responsive y lista para conectar con tu API. Incluye validación,
+          medidor de contraseña y feedback de errores claro.
+        </p>
+        <div class="features">
+          <div class="feat">
+            <b>Validación amigable</b>
+            <span>Errores por campo + resumen arriba.</span>
+          </div>
+          <div class="feat">
+            <b>UX moderna</b>
+            <span>Autofill, estados, accesible.</span>
+          </div>
+          <div class="feat">
+            <b>Seguridad básica</b>
+            <span>Contraseña fuerte, confirmar, términos.</span>
+          </div>
+          <div class="feat">
+            <b>Lista para API</b>
+            <span>Se envía por <code>fetch</code> a un endpoint configurable.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" aria-label="Formulario de registro">
+        <header class="cardHeader">
+          <h2>Registro</h2>
+          <a href="#" id="loginLink">¿Ya tienes cuenta? Inicia sesión</a>
+        </header>
+
+        <div class="errors" id="errorBox" data-visible="false" role="alert" aria-live="polite">
+          <strong>Revisa estos puntos:</strong>
+          <ul id="errorList"></ul>
+        </div>
+
+        <form id="registerForm" novalidate>
+          <div class="grid2">
+            <label>
+              <div class="labelRow">
+                <span>Nombre</span>
+                <span class="hint" id="firstNameHint">Requerido</span>
+              </div>
+              <input
+                id="firstName"
+                name="firstName"
+                autocomplete="given-name"
+                placeholder="Tu nombre"
+                required
+                minlength="2"
+                inputmode="text"
+              />
+            </label>
+
+            <label>
+              <div class="labelRow">
+                <span>Apellido</span>
+                <span class="hint" id="lastNameHint">Requerido</span>
+              </div>
+              <input
+                id="lastName"
+                name="lastName"
+                autocomplete="family-name"
+                placeholder="Tu apellido"
+                required
+                minlength="2"
+                inputmode="text"
+              />
+            </label>
+          </div>
+
+          <label>
+            <div class="labelRow">
+              <span>Email</span>
+              <span class="hint" id="emailHint">Usaremos este email para tu cuenta</span>
+            </div>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              placeholder="tu@correo.com"
+              required
+              inputmode="email"
+            />
+          </label>
+
+          <label>
+            <div class="labelRow">
+              <span>Usuario</span>
+              <span class="hint" id="usernameHint">3–24 caracteres, sin espacios</span>
+            </div>
+            <input
+              id="username"
+              name="username"
+              autocomplete="username"
+              placeholder="tu_usuario"
+              required
+              minlength="3"
+              maxlength="24"
+              pattern="^[a-zA-Z0-9._-]{3,24}$"
+            />
+          </label>
+
+          <label>
+            <div class="labelRow">
+              <span>Contraseña</span>
+              <span class="hint" id="passwordHint">Mínimo 8, con mayúscula, número y símbolo</span>
+            </div>
+            <div class="inputWrap">
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="new-password"
+                placeholder="••••••••"
+                required
+                minlength="8"
+              />
+              <button class="iconBtn" type="button" id="togglePwd" aria-label="Mostrar u ocultar contraseña">
+                Ver
+              </button>
+            </div>
+            <div class="strength" aria-label="Fortaleza de contraseña">
+              <div class="meter" aria-hidden="true"><div id="pwdMeterBar"></div></div>
+              <div class="strengthText">
+                <span id="pwdStrengthLabel">Fortaleza: —</span>
+                <span id="pwdScoreLabel">0/4</span>
+              </div>
+            </div>
+          </label>
+
+          <label>
+            <div class="labelRow">
+              <span>Confirmar contraseña</span>
+              <span class="hint" id="confirmHint">Debe coincidir</span>
+            </div>
+            <div class="inputWrap">
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                autocomplete="new-password"
+                placeholder="••••••••"
+                required
+                minlength="8"
+              />
+              <button class="iconBtn" type="button" id="toggleConfirm" aria-label="Mostrar u ocultar confirmación">
+                Ver
+              </button>
+            </div>
+          </label>
+
+          <label class="row">
+            <input id="terms" name="terms" type="checkbox" required />
+            <p>
+              Acepto los <a href="#" id="termsLink">términos</a> y la <a href="#" id="privacyLink">política de privacidad</a>.
+            </p>
+          </label>
+
+          <div class="actions">
+            <button class="btn btnPrimary" id="submitBtn" type="submit">Crear cuenta</button>
+            <button class="btn" id="fillDemoBtn" type="button">Rellenar ejemplo</button>
+          </div>
+
+          <p class="fineprint">
+            Al registrarte, se enviarán tus datos por HTTPS a tu backend. En este demo, el endpoint está en
+            <code id="apiEndpointText"></code>.
+          </p>
+        </form>
+      </section>
+    </main>
+
+    <aside class="toast" id="toast" data-visible="false" role="status" aria-live="polite">
+      <div class="pill" id="toastPill">Info</div>
+      <div>
+        <strong id="toastTitle">—</strong>
+        <p id="toastBody">—</p>
+      </div>
+    </aside>
+
+    <script>
+      const API_ENDPOINT = "http://localhost:3000/api/register";
+
+      const form = document.getElementById("registerForm");
+      const submitBtn = document.getElementById("submitBtn");
+      const fillDemoBtn = document.getElementById("fillDemoBtn");
+
+      const firstName = document.getElementById("firstName");
+      const lastName = document.getElementById("lastName");
+      const email = document.getElementById("email");
+      const username = document.getElementById("username");
+      const password = document.getElementById("password");
+      const confirmPassword = document.getElementById("confirmPassword");
+      const terms = document.getElementById("terms");
+
+      const togglePwd = document.getElementById("togglePwd");
+      const toggleConfirm = document.getElementById("toggleConfirm");
+
+      const errorBox = document.getElementById("errorBox");
+      const errorList = document.getElementById("errorList");
+
+      const pwdMeterBar = document.getElementById("pwdMeterBar");
+      const pwdStrengthLabel = document.getElementById("pwdStrengthLabel");
+      const pwdScoreLabel = document.getElementById("pwdScoreLabel");
+
+      const toast = document.getElementById("toast");
+      const toastPill = document.getElementById("toastPill");
+      const toastTitle = document.getElementById("toastTitle");
+      const toastBody = document.getElementById("toastBody");
+      const apiEndpointText = document.getElementById("apiEndpointText");
+
+      apiEndpointText.textContent = API_ENDPOINT;
+
+      function showToast(kind, title, body) {
+        toastPill.textContent = kind;
+        toastTitle.textContent = title;
+        toastBody.textContent = body;
+        toast.dataset.visible = "true";
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => (toast.dataset.visible = "false"), 4200);
+      }
+
+      function setBusy(isBusy) {
+        submitBtn.disabled = isBusy;
+        fillDemoBtn.disabled = isBusy;
+        submitBtn.textContent = isBusy ? "Creando cuenta..." : "Crear cuenta";
+      }
+
+      function normalizeUsername(value) {
+        return value.trim().replace(/\s+/g, "");
+      }
+
+      function scorePassword(pwd) {
+        const s = {
+          length: pwd.length >= 8,
+          upper: /[A-Z]/.test(pwd),
+          number: /\d/.test(pwd),
+          symbol: /[^A-Za-z0-9]/.test(pwd),
+        };
+        const score = [s.length, s.upper, s.number, s.symbol].filter(Boolean).length;
+        return { score, signals: s };
+      }
+
+      function updatePasswordStrength() {
+        const { score } = scorePassword(password.value);
+        const pct = Math.round((score / 4) * 100);
+        pwdMeterBar.style.width = pct + "%";
+        pwdScoreLabel.textContent = `${score}/4`;
+
+        const label = score <= 1 ? "Débil" : score === 2 ? "Regular" : score === 3 ? "Buena" : "Fuerte";
+        pwdStrengthLabel.textContent = `Fortaleza: ${password.value ? label : "—"}`;
+      }
+
+      function setFieldError(inputEl, message) {
+        inputEl.setCustomValidity(message);
+      }
+
+      function clearFieldError(inputEl) {
+        inputEl.setCustomValidity("");
+      }
+
+      function validate() {
+        const errors = [];
+
+        username.value = normalizeUsername(username.value);
+
+        clearFieldError(confirmPassword);
+        if (confirmPassword.value && password.value !== confirmPassword.value) {
+          setFieldError(confirmPassword, "Las contraseñas no coinciden.");
+        }
+
+        clearFieldError(password);
+        const { score } = scorePassword(password.value);
+        if (password.value && score < 3) {
+          setFieldError(password, "Usa una contraseña más fuerte (mínimo 3/4).");
+        }
+
+        // Ejecuta validaciones nativas
+        const inputs = [firstName, lastName, email, username, password, confirmPassword];
+        for (const el of inputs) {
+          if (!el.checkValidity()) {
+            errors.push(el.validationMessage);
+          }
+        }
+
+        if (!terms.checked) {
+          errors.push("Debes aceptar los términos y la política de privacidad.");
+        }
+
+        // Dedup
+        return Array.from(new Set(errors.filter(Boolean)));
+      }
+
+      function renderErrors(errors) {
+        errorList.innerHTML = "";
+        if (errors.length === 0) {
+          errorBox.dataset.visible = "false";
+          return;
+        }
+        for (const msg of errors) {
+          const li = document.createElement("li");
+          li.textContent = msg;
+          errorList.appendChild(li);
+        }
+        errorBox.dataset.visible = "true";
+      }
+
+      function setPasswordVisibility(inputEl, btn) {
+        const isPwd = inputEl.type === "password";
+        inputEl.type = isPwd ? "text" : "password";
+        btn.textContent = isPwd ? "Ocultar" : "Ver";
+      }
+
+      togglePwd.addEventListener("click", () => setPasswordVisibility(password, togglePwd));
+      toggleConfirm.addEventListener("click", () => setPasswordVisibility(confirmPassword, toggleConfirm));
+
+      password.addEventListener("input", updatePasswordStrength);
+      updatePasswordStrength();
+
+      fillDemoBtn.addEventListener("click", () => {
+        firstName.value = "María";
+        lastName.value = "Pérez";
+        email.value = "maria.perez@example.com";
+        username.value = "maria.perez";
+        password.value = "M!doc2026";
+        confirmPassword.value = "M!doc2026";
+        terms.checked = true;
+        updatePasswordStrength();
+        renderErrors([]);
+        showToast("Tip", "Ejemplo cargado", "Ahora prueba el botón “Crear cuenta”.");
+      });
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        renderErrors([]);
+
+        const errors = validate();
+        renderErrors(errors);
+        if (errors.length > 0) {
+          showToast("Error", "Faltan datos", "Corrige los puntos marcados y vuelve a intentar.");
+          return;
+        }
+
+        setBusy(true);
+        try {
+          const payload = {
+            firstName: firstName.value.trim(),
+            lastName: lastName.value.trim(),
+            email: email.value.trim().toLowerCase(),
+            username: normalizeUsername(username.value),
+            password: password.value,
+          };
+
+          const res = await fetch(API_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          if (!res.ok) {
+            let serverMsg = "";
+            try {
+              const data = await res.json();
+              serverMsg = data?.message || data?.error || "";
+            } catch {
+              // ignore
+            }
+            throw new Error(serverMsg || `Registro falló (HTTP ${res.status}).`);
+          }
+
+          showToast("OK", "Cuenta creada", "Tu registro fue enviado correctamente.");
+          form.reset();
+          updatePasswordStrength();
+          renderErrors([]);
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : "Error desconocido";
+          showToast("Error", "No se pudo registrar", msg);
+        } finally {
+          setBusy(false);
+        }
+      });
+
+      // Links demo
+      document.getElementById("loginLink").addEventListener("click", (e) => {
+        e.preventDefault();
+        showToast("Info", "Navegación", "Conecta este enlace a tu pantalla de login.");
+      });
+      document.getElementById("termsLink").addEventListener("click", (e) => {
+        e.preventDefault();
+        showToast("Info", "Términos", "Aquí puedes enlazar a tus términos.");
+      });
+      document.getElementById("privacyLink").addEventListener("click", (e) => {
+        e.preventDefault();
+        showToast("Info", "Privacidad", "Aquí puedes enlazar a tu política de privacidad.");
+      });
+    </script>
+  </body>
+</html>
+
