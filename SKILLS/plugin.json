@@ -1,0 +1,29 @@
+{
+  "name": "midoc-engineering-skills",
+  "version": "1.0.0",
+  "description": "Skills de ingeniería para MIDOC: revisión de código, seguridad OWASP, QA/testing, y cumplimiento de datos de salud (NOM-024). Adaptado a un SaaS HealthTech con expedientes clínicos, recetas digitales, facturación electrónica y telemedicina.",
+  "author": "MIDOC",
+  "license": "UNLICENSED",
+  "skills": [
+    {
+      "name": "code-reviewer",
+      "path": "code-reviewer/SKILL.md",
+      "description": "Revisión de código desde perspectiva de Staff Engineer, con foco extra en datos de pacientes."
+    },
+    {
+      "name": "security-auditor",
+      "path": "security-auditor/SKILL.md",
+      "description": "Auditoría de seguridad OWASP Top 10, manejo de secretos, autenticación y autorización."
+    },
+    {
+      "name": "qa-engineer",
+      "path": "qa-engineer/SKILL.md",
+      "description": "Estrategia de testing y análisis de gaps de cobertura, regla de Beyoncé."
+    },
+    {
+      "name": "health-data-compliance",
+      "path": "health-data-compliance/SKILL.md",
+      "description": "Manejo de datos de pacientes y expediente clínico frente a NOM-024 y LFPDPPP."
+    }
+  ]
+}
