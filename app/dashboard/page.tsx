@@ -21,9 +21,15 @@ export default async function DashboardPage() {
   // Auto-provisionar el perfil de médico en su primer login (magic
   // link no tiene un paso de "registro" separado). Si ya existe, esto
   // no hace nada gracias al onConflict.
-  await supabase
-    .from("medicos")
-    .upsert({ id: user.id, nombre: user.email }, { onConflict: "id", ignoreDuplicates: true });
+  // La tabla medicos ya existía en el esquema original con "email" como
+  // columna obligatoria — antes este upsert no la mandaba, así que
+  // fallaba en silencio en cada login y ningún médico llegaba a tener
+  // fila propia (lo que después tronaba cualquier alta de paciente con
+  // un error de llave foránea, un 409).
+  await supabase.from("medicos").upsert(
+    { id: user.id, nombre: user.email, email: user.email },
+    { onConflict: "id", ignoreDuplicates: true }
+  );
 
   return <DashboardClient medicoId={user.id} medicoEmail={user.email ?? ""} />;
 }
