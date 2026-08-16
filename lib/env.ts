@@ -26,13 +26,4 @@ export function getServerEnv() {
   return parsed.data;
 }
 
-export function getClientEnv() {
-  const parsed = ClientEnvSchema.safeParse(process.env);
-  if (!parsed.success) {
-    throw new Error(
-      "Faltan/son inválidas las env vars de cliente. Requeridas: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY."
-    );
-  }
-  return parsed.data;
-}
-
+export function getClientEnv() { const raw = { NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, }; const parsed = ClientEnvSchema.safeParse(raw); if (!parsed.success) { throw new Error( "Faltan/son inválidas las env vars de cliente. Requeridas: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY." ); } return parsed.data; }
