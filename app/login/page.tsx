@@ -102,6 +102,8 @@ export default function LoginPage() {
                   padding: "10px 12px",
                   borderRadius: "8px",
                   border: "1px solid #e5e7eb",
+                  color: "#111827",
+                  background: "white",
                   fontSize: "14px",
                   marginTop: "4px",
                   boxSizing: "border-box",
