@@ -24,6 +24,12 @@ export function DashboardClient({ medicoId, medicoEmail }: Props) {
   const [diagnostico, setDiagnostico] = useState("");
   const [plan, setPlan] = useState("");
   const [msg, setMsg] = useState("");
+  // Formulario cita
+  const [citaPacienteId, setCitaPacienteId] = useState("");
+  const [citaFecha, setCitaFecha] = useState("");
+  const [citaModalidad, setCitaModalidad] = useState("presencial");
+  const [citaMonto, setCitaMonto] = useState("");
+  const [citaMsg, setCitaMsg] = useState("");
 
   useEffect(() => {
     cargarDatos();
@@ -57,6 +63,32 @@ export function DashboardClient({ medicoId, medicoEmail }: Props) {
     setPacientes(p.data || []);
     setCitas(c.data || []);
     setExpedientes(e.data || []);
+  }
+
+  async function crearCita() {
+    if (!citaPacienteId || !citaFecha) {
+      setCitaMsg("Selecciona un paciente y una fecha.");
+      return;
+    }
+    setLoading(true);
+    setCitaMsg("");
+    const { error } = await supabase.from("citas").insert({
+      paciente_id: citaPacienteId,
+      medico_id: medicoId,
+      fecha_hora: new Date(citaFecha).toISOString(),
+      modalidad: citaModalidad,
+      monto: citaMonto ? Number(citaMonto) : null,
+    });
+    setLoading(false);
+    if (error) {
+      setCitaMsg("Error al guardar: " + error.message);
+      return;
+    }
+    setCitaMsg("Cita guardada.");
+    setCitaPacienteId("");
+    setCitaFecha("");
+    setCitaMonto("");
+    await cargarDatos();
   }
 
   async function handleLogout() {
@@ -560,7 +592,68 @@ export function DashboardClient({ medicoId, medicoEmail }: Props) {
         {tab === "citas" && (
           <div>
             <h2 style={{ fontSize: "18px", fontWeight: "600", marginBottom: "1rem" }}>📅 Citas</h2>
-            {citas.length === 0 ? (
+            <div
+          style={{
+            background: "white",
+            border: "1px solid #e5e7eb",
+            borderRadius: "10px",
+            padding: "1rem",
+            marginBottom: "1rem",
+            display: "grid",
+            gap: "10px",
+          }}
+        >
+          <div style={{ fontWeight: "600" }}>Nueva cita</div>
+          <select
+            value={citaPacienteId}
+            onChange={(e) => setCitaPacienteId(e.target.value)}
+            style={{ padding: "8px", borderRadius: "6px", border: "1px solid #d1d5db" }}
+          >
+            <option value="">Selecciona un paciente</option>
+            {pacientes.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.nombre || p.telefono || p.id}
+              </option>
+            ))}
+          </select>
+          <input
+            type="datetime-local"
+            value={citaFecha}
+            onChange={(e) => setCitaFecha(e.target.value)}
+            style={{ padding: "8px", borderRadius: "6px", border: "1px solid #d1d5db" }}
+          />
+          <select
+            value={citaModalidad}
+            onChange={(e) => setCitaModalidad(e.target.value)}
+            style={{ padding: "8px", borderRadius: "6px", border: "1px solid #d1d5db" }}
+          >
+            <option value="presencial">Presencial</option>
+            <option value="en_linea">En l&iacute;nea</option>
+          </select>
+          <input
+            type="number"
+            placeholder="Monto MXN"
+            value={citaMonto}
+            onChange={(e) => setCitaMonto(e.target.value)}
+            style={{ padding: "8px", borderRadius: "6px", border: "1px solid #d1d5db" }}
+          />
+          <button
+            onClick={crearCita}
+            disabled={loading}
+            style={{
+              padding: "10px",
+              borderRadius: "6px",
+              border: "none",
+              background: "#185FA5",
+              color: "white",
+              fontWeight: "600",
+              cursor: "pointer",
+            }}
+          >
+            Guardar cita
+          </button>
+          {citaMsg && <div style={{ fontSize: "13px" }}>{citaMsg}</div>}
+        </div>        {citas.length === 0 ? (
               <div style={{ textAlign: "center", padding: "2rem", color: "#9ca3af" }}>
                 <div style={{ fontSize: "40px", marginBottom: ".5rem" }}>📅</div>
                 <div>No hay citas registradas aún.</div>
