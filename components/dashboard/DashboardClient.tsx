@@ -167,77 +167,99 @@ export function DashboardClient({ medicoId, medicoEmail }: Props) {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f9fafb", fontFamily: "Arial, sans-serif" }}>
-      {/* Header */}
-      <div
-        style={{
-          background: "#1D9E75",
-          padding: "1rem 1.5rem",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <div style={{ color: "white", fontSize: "20px", fontWeight: "700" }}>
-          MIDOC <span style={{ fontSize: "13px", opacity: 0.7 }}>· Dashboard Médico</span>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-          <span style={{ color: "white", fontSize: "13px", opacity: 0.85 }}>{medicoEmail}</span>
-          <button
-            onClick={handleLogout}
-            style={{
-              color: "white",
-              fontSize: "13px",
-              opacity: 0.9,
-              background: "rgba(255,255,255,.15)",
-              border: "none",
-              borderRadius: "6px",
-              padding: "6px 12px",
-              cursor: "pointer",
-            }}
-          >
-            Salir
-          </button>
-        </div>
-      </div>
+    <div className="midoc-shell" style={{ minHeight: "100vh", background: "#f5f3ee", fontFamily: "system-ui, -apple-system, Segoe UI, Arial, sans-serif", color: "#1c2b26" }}>
+      {/* Estilos del dashboard */}
+        <style>{`
+          .midoc-shell { color: #1c2b26; color-scheme: light; }
+          .midoc-shell h2 { font-family: Georgia, serif; font-weight: 600; color: #12332b; }
+          .midoc-shell input, .midoc-shell select, .midoc-shell textarea { color: #1c2b26; background: #ffffff; }
+          .midoc-side { position: fixed; top: 0; left: 0; bottom: 0; width: 232px; background: #12332b; color: #dbe8e2; display: flex; flex-direction: column; padding: 20px 12px; overflow-y: auto; z-index: 10; }
+          .midoc-main { margin-left: 232px; }
+          .midoc-nav-btn { display: block; width: 100%; text-align: left; border: none; background: none; color: #b9cfc6; font-size: 13px; padding: 8px 10px; border-radius: 6px; cursor: pointer; }
+          .midoc-nav-btn:hover { background: rgba(255,255,255,.07); }
+          .midoc-nav-btn.active { background: #1f7a63; color: #ffffff; font-weight: 600; }
+          .midoc-nav-btn.soon { opacity: .55; cursor: default; }
+          @media (max-width: 800px) {
+            .midoc-side { position: static; width: auto; flex-direction: row; flex-wrap: wrap; gap: 4px; padding: 10px; }
+            .midoc-main { margin-left: 0; }
+          }
+        `}</style>
 
-      {/* Tabs */}
-      <div
-        style={{
-          background: "white",
-          borderBottom: "1px solid #e5e7eb",
-          display: "flex",
-          gap: "0",
-          padding: "0 1.5rem",
-        }}
-      >
-        {[
-          { id: "inicio", label: "🏠 Inicio" },
-          { id: "expediente", label: "📋 Nuevo Expediente" },
-          { id: "pacientes", label: "👥 Pacientes" },
-          { id: "expedientes", label: "📁 Expedientes" },
-          { id: "citas", label: "📅 Citas" },
-        ].map((t) => (
-          <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
-            style={{
-              padding: "12px 16px",
-              border: "none",
-              background: "none",
-              cursor: "pointer",
-              borderBottom: tab === t.id ? "2px solid #1D9E75" : "2px solid transparent",
-              color: tab === t.id ? "#1D9E75" : "#6b7280",
-              fontWeight: tab === t.id ? "600" : "400",
-              fontSize: "13px",
-            }}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
+        {/* Barra lateral */}
+        <aside className="midoc-side">
+          <div style={{ fontFamily: "Georgia, serif", fontSize: "22px", fontWeight: 700, color: "#ffffff", padding: "4px 10px 18px" }}>
+            <span style={{ color: "#d9822b" }}>&bull;</span> MIDOC
+          </div>
+          {[
+            {
+              g: "GENERAL",
+              items: [
+                { id: "inicio", label: "Panel principal", soon: false },
+                { id: "citas", label: "Agenda", soon: false },
+                { id: "pacientes", label: "Pacientes", soon: false },
+              ],
+            },
+            {
+              g: "CL\u00cdNICO",
+              items: [
+                { id: "expediente", label: "Nuevo expediente", soon: false },
+                { id: "expedientes", label: "Expedientes", soon: false },
+                { id: "", label: "Recetas digitales", soon: true },
+                { id: "", label: "Videoconsulta", soon: true },
+              ],
+            },
+            {
+              g: "NEGOCIO",
+              items: [
+                { id: "", label: "Cobros y CFDI", soon: true },
+                { id: "", label: "WhatsApp autom\u00e1tico", soon: true },
+              ],
+            },
+          ].map((grp) => (
+            <div key={grp.g} style={{ marginBottom: "14px" }}>
+              <div style={{ fontSize: "10px", letterSpacing: "1.5px", color: "#7fa397", padding: "0 10px 6px" }}>{grp.g}</div>
+              {grp.items.map((it) => (
+                <button
+                  key={it.label}
+                  className={"midoc-nav-btn" + (it.soon ? " soon" : "") + (!it.soon && tab === it.id ? " active" : "")}
+                  onClick={() => {
+                    if (!it.soon) setTab(it.id);
+                  }}
+                >
+                  {!it.soon && tab === it.id ? "\u25C6 " : "\u25C7 "}
+                  {it.label}
+                  {it.soon ? " (pronto)" : ""}
+                </button>
+              ))}
+            </div>
+          ))}
+          <div style={{ marginTop: "auto", borderTop: "1px solid rgba(255,255,255,.12)", padding: "12px 10px 0" }}>
+            <div style={{ fontSize: "12px", color: "#b9cfc6", wordBreak: "break-all", marginBottom: "8px" }}>{medicoEmail}</div>
+            <button
+              onClick={handleLogout}
+              style={{
+                color: "#ffffff",
+                fontSize: "13px",
+                background: "rgba(255,255,255,.12)",
+                border: "none",
+                borderRadius: "6px",
+                padding: "6px 12px",
+                cursor: "pointer",
+              }}
+            >
+              Salir
+            </button>
+          </div>
+        </aside>
 
-      <div style={{ maxWidth: "900px", margin: "0 auto", padding: "1.5rem" }}>
+        {/* Barra superior con el titulo de la seccion */}
+        <div className="midoc-main" style={{ padding: "22px 2rem 0" }}>
+          <h2 style={{ margin: 0, fontSize: "24px" }}>
+            {(({ inicio: "Panel principal", expediente: "Nuevo expediente", pacientes: "Pacientes", expedientes: "Expedientes", citas: "Agenda" }) as Record<string, string>)[tab] || ""}
+          </h2>
+        </div>
+
+        <div className="midoc-main" style={{ maxWidth: "1100px", padding: "1.25rem 2rem 2rem" }}>
         {/* INICIO */}
         {tab === "inicio" && (
           <div>
