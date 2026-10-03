@@ -31,6 +31,11 @@ export function DashboardClient({ medicoId, medicoEmail }: Props) {
   const [citaMonto, setCitaMonto] = useState("");
   const [citaMsg, setCitaMsg] = useState("");
 
+  // Ficha de paciente
+  const [pacienteSel, setPacienteSel] = useState<any>(null);
+  const [fichaExp, setFichaExp] = useState<any[]>([]);
+  const [fichaCitas, setFichaCitas] = useState<any[]>([]);
+
   useEffect(() => {
     cargarDatos();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -89,6 +94,28 @@ export function DashboardClient({ medicoId, medicoEmail }: Props) {
     setCitaFecha("");
     setCitaMonto("");
     await cargarDatos();
+  }
+
+  async function abrirPaciente(p: any) {
+    setPacienteSel(p);
+    setFichaExp([]);
+    setFichaCitas([]);
+    const [e, c] = await Promise.all([
+      supabase
+        .from("expedientes")
+        .select("*")
+        .eq("paciente_id", p.id)
+        .eq("medico_id", medicoId)
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("citas")
+        .select("*")
+        .eq("paciente_id", p.id)
+        .eq("medico_id", medicoId)
+        .order("fecha_hora", { ascending: false }),
+    ]);
+    setFichaExp(e.data || []);
+    setFichaCitas(c.data || []);
   }
 
   async function handleLogout() {
@@ -179,6 +206,9 @@ export function DashboardClient({ medicoId, medicoEmail }: Props) {
           .midoc-nav-btn:hover { background: rgba(255,255,255,.07); }
           .midoc-nav-btn.active { background: #1f7a63; color: #ffffff; font-weight: 600; }
           .midoc-nav-btn.soon { opacity: .55; cursor: default; }
+          .midoc-click { cursor: pointer; }
+          .midoc-click:hover { box-shadow: 0 2px 10px rgba(18,51,43,.12); }
+          .midoc-back { border: none; background: none; color: #1f7a63; font-size: 14px; cursor: pointer; padding: 0; margin-bottom: 12px; }
           @media (max-width: 800px) {
             .midoc-side { position: static; width: auto; flex-direction: row; flex-wrap: wrap; gap: 4px; padding: 10px; }
             .midoc-main { margin-left: 0; }
@@ -223,7 +253,7 @@ export function DashboardClient({ medicoId, medicoEmail }: Props) {
                   key={it.label}
                   className={"midoc-nav-btn" + (it.soon ? " soon" : "") + (!it.soon && tab === it.id ? " active" : "")}
                   onClick={() => {
-                    if (!it.soon) setTab(it.id);
+                    if (!it.soon) { setTab(it.id); setPacienteSel(null); }
                   }}
                 >
                   {!it.soon && tab === it.id ? "\u25C6 " : "\u25C7 "}
@@ -504,7 +534,81 @@ export function DashboardClient({ medicoId, medicoEmail }: Props) {
         )}
 
         {/* PACIENTES */}
-        {tab === "pacientes" && (
+        {tab === "pacientes" && pacienteSel && (
+          <div>
+            <button className="midoc-back" onClick={() => setPacienteSel(null)}>
+              &larr; Volver a pacientes
+            </button>
+            <div style={{ background: "#ffffff", border: "1px solid #e5e7eb", borderRadius: "10px", padding: "1.25rem", marginBottom: "1rem" }}>
+              <h2 style={{ margin: "0 0 12px", fontSize: "22px" }}>{pacienteSel.nombre}</h2>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "12px" }}>
+                {[
+                  ["Tel\u00e9fono", pacienteSel.telefono],
+                  ["Correo", pacienteSel.email && !String(pacienteSel.email).endsWith("@midoc.temp") ? pacienteSel.email : ""],
+                  ["Fecha de nacimiento", pacienteSel.fecha_nacimiento ? String(pacienteSel.fecha_nacimiento).split("-").reverse().join("/") : ""],
+                  ["CURP", pacienteSel.curp],
+                  ["Tipo de sangre", pacienteSel.tipo_sangre],
+                  ["Alergias", pacienteSel.alergias],
+                  ["Registrado", pacienteSel.created_at ? new Date(pacienteSel.created_at).toLocaleDateString("es-MX") : ""],
+                ].map(([k, v]) => (
+                  <div key={k}>
+                    <div style={{ fontSize: "11px", letterSpacing: "1px", color: "#6b7280", textTransform: "uppercase" }}>{k}</div>
+                    <div style={{ fontSize: "15px" }}>{v || "Sin registrar"}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <h2 style={{ fontSize: "18px", margin: "0 0 10px" }}>Expedientes</h2>
+            {fichaExp.length === 0 ? (
+              <div style={{ color: "#6b7280", marginBottom: "1rem" }}>Este paciente a&uacute;n no tiene expedientes.</div>
+            ) : (
+              fichaExp.map((e) => (
+                <div key={e.id} style={{ background: "#ffffff", border: "1px solid #e5e7eb", borderRadius: "10px", padding: "1rem", marginBottom: "10px" }}>
+                  <div style={{ fontSize: "12px", color: "#6b7280", marginBottom: "6px" }}>
+                    {e.created_at ? new Date(e.created_at).toLocaleString("es-MX") : ""}
+                  </div>
+                  {[
+                    ["Motivo", e.motivo],
+                    ["Exploraci\u00f3n", e.exploracion],
+                    ["Diagn\u00f3stico", e.diagnostico],
+                    ["Plan", e.plan],
+                    ["Transcripci\u00f3n", e.transcripcion],
+                  ].map(([k, v]) =>
+                    v ? (
+                      <div key={k} style={{ marginBottom: "6px" }}>
+                        <span style={{ fontWeight: 600 }}>{k}: </span>
+                        {v}
+                      </div>
+                    ) : null
+                  )}
+                </div>
+              ))
+            )}
+
+            <h2 style={{ fontSize: "18px", margin: "1rem 0 10px" }}>Citas</h2>
+            {fichaCitas.length === 0 ? (
+              <div style={{ color: "#6b7280" }}>Este paciente a&uacute;n no tiene citas.</div>
+            ) : (
+              fichaCitas.map((c) => (
+                <div key={c.id} style={{ background: "#ffffff", border: "1px solid #e5e7eb", borderRadius: "10px", padding: "1rem", marginBottom: "8px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    <div style={{ fontWeight: 500 }}>{c.modalidad === "en_linea" ? "En l\u00ednea" : "Presencial"}</div>
+                    <div style={{ fontSize: "12px", color: "#6b7280" }}>
+                      {c.fecha_hora ? new Date(c.fecha_hora).toLocaleString("es-MX") : ""}
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontWeight: 600, color: "#1f7a63" }}>{c.monto != null ? "$" + c.monto + " MXN" : ""}</div>
+                    <div style={{ fontSize: "11px" }}>{c.estado}</div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+
+        {tab === "pacientes" && !pacienteSel && (
           <div>
             <h2 style={{ fontSize: "18px", fontWeight: "600", marginBottom: "1rem" }}>
               👥 Pacientes registrados
@@ -516,8 +620,7 @@ export function DashboardClient({ medicoId, medicoEmail }: Props) {
               </div>
             ) : (
               pacientes.map((p, i) => (
-                <div
-                  key={i}
+<div className="midoc-click" onClick={() => abrirPaciente(p)} key={i}
                   style={{
                     background: "white",
                     border: "1px solid #e5e7eb",
