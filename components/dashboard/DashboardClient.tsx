@@ -305,12 +305,11 @@ export function DashboardClient({ medicoId, medicoEmail }: Props) {
               }}
             >
               {[
-                { label: "Pacientes", val: pacientes.length, icon: "👥", color: "#1D9E75" },
-                { label: "Citas", val: citas.length, icon: "📅", color: "#185FA5" },
-                { label: "Expedientes", val: expedientes.length, icon: "📋", color: "#534AB7" },
+                { label: "Pacientes", go: "pacientes", val: pacientes.length, icon: "👥", color: "#1D9E75" },
+                { label: "Citas", go: "citas", val: citas.length, icon: "📅", color: "#185FA5" },
+                { label: "Expedientes", go: "expedientes", val: expedientes.length, icon: "📋", color: "#534AB7" },
               ].map((k, i) => (
-                <div
-                  key={i}
+<div className="midoc-click" onClick={() => { setTab(k.go); setPacienteSel(null); }} key={i}
                   style={{
                     background: "white",
                     border: "1px solid #e5e7eb",
