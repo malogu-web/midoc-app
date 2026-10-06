@@ -30,6 +30,11 @@ export function DashboardClient({ medicoId, medicoEmail }: Props) {
   const [citaModalidad, setCitaModalidad] = useState("presencial");
   const [citaMonto, setCitaMonto] = useState("");
   const [citaMsg, setCitaMsg] = useState("");
+  // Mi agenda
+  const [agenda, setAgenda] = useState<any[]>([]);
+  const [agendaVista, setAgendaVista] = useState("proximas");
+  const [agendaMsg, setAgendaMsg] = useState("");
+  const [nombresPac, setNombresPac] = useState<Record<string, any>>({});
 
   // Ficha de paciente
   const [pacienteSel, setPacienteSel] = useState<any>(null);
@@ -116,6 +121,62 @@ export function DashboardClient({ medicoId, medicoEmail }: Props) {
     ]);
     setFichaExp(e.data || []);
     setFichaCitas(c.data || []);
+  }
+
+  useEffect(() => {
+    if (tab === "citas") cargarAgenda();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab]);
+
+  async function cargarAgenda() {
+    const [c, p] = await Promise.all([
+      supabase
+        .from("citas")
+        .select("*")
+        .eq("medico_id", medicoId)
+        .order("fecha_hora", { ascending: true }),
+      supabase
+        .from("pacientes")
+        .select("id, nombre, telefono")
+        .eq("medico_id", medicoId),
+    ]);
+    setAgenda(c.data || []);
+    const mapa: Record<string, any> = {};
+    (p.data || []).forEach((x: any) => {
+      mapa[x.id] = x;
+    });
+    setNombresPac(mapa);
+  }
+
+  async function actualizarCita(id: string, cambios: any) {
+    setAgendaMsg("");
+    const { data, error } = await supabase
+      .from("citas")
+      .update(cambios)
+      .eq("id", id)
+      .eq("medico_id", medicoId)
+      .select();
+    if (error) {
+      setAgendaMsg("Error al guardar: " + error.message);
+      return;
+    }
+    if (!data || data.length === 0) {
+      setAgendaMsg("No se pudo actualizar la cita. Revisa los permisos en Supabase.");
+      return;
+    }
+    setAgenda((prev) => prev.map((c) => (c.id === id ? { ...c, ...cambios } : c)));
+  }
+
+  function agendaVisible() {
+    const ahora = Date.now();
+    let lista = agenda.filter((c) => {
+      const t = new Date(c.fecha_hora).getTime();
+      if (agendaVista === "proximas") return t >= ahora;
+      if (agendaVista === "pasadas") return t < ahora;
+      return true;
+    });
+    if (agendaVista !== "proximas") lista = [...lista].reverse();
+    return lista;
   }
 
   async function handleLogout() {
@@ -207,6 +268,8 @@ export function DashboardClient({ medicoId, medicoEmail }: Props) {
           .midoc-nav-btn.active { background: #1f7a63; color: #ffffff; font-weight: 600; }
           .midoc-nav-btn.soon { opacity: .55; cursor: default; }
           .midoc-click { cursor: pointer; }
+          .midoc-chip { border: 1px solid #d1d5db; background: #ffffff; color: #1c2b26; border-radius: 999px; padding: 6px 12px; font-size: 13px; cursor: pointer; }
+          .midoc-chip.active { background: #12332b; color: #ffffff; border-color: #12332b; }
           .midoc-click:hover { box-shadow: 0 2px 10px rgba(18,51,43,.12); }
           .midoc-back { border: none; background: none; color: #1f7a63; font-size: 14px; cursor: pointer; padding: 0; margin-bottom: 12px; }
           @media (max-width: 800px) {
@@ -225,7 +288,8 @@ export function DashboardClient({ medicoId, medicoEmail }: Props) {
               g: "GENERAL",
               items: [
                 { id: "inicio", label: "Panel principal", soon: false },
-                { id: "citas", label: "Agenda", soon: false },
+                { id: "agendar", label: "Agendar cita", soon: false },
+                { id: "citas", label: "Mi agenda", soon: false },
                 { id: "pacientes", label: "Pacientes", soon: false },
               ],
             },
@@ -285,7 +349,7 @@ export function DashboardClient({ medicoId, medicoEmail }: Props) {
         {/* Barra superior con el titulo de la seccion */}
         <div className="midoc-main" style={{ padding: "22px 2rem 0" }}>
           <h2 style={{ margin: 0, fontSize: "24px" }}>
-            {(({ inicio: "Panel principal", expediente: "Nuevo expediente", pacientes: "Pacientes", expedientes: "Expedientes", citas: "Agenda" }) as Record<string, string>)[tab] || ""}
+            {(({ inicio: "Panel principal", expediente: "Nuevo expediente", pacientes: "Pacientes", expedientes: "Expedientes", agendar: "Agendar cita", citas: "Mi agenda" }) as Record<string, string>)[tab] || ""}
           </h2>
         </div>
 
@@ -715,7 +779,76 @@ export function DashboardClient({ medicoId, medicoEmail }: Props) {
         {/* CITAS */}
         {tab === "citas" && (
           <div>
-            <h2 style={{ fontSize: "18px", fontWeight: "600", marginBottom: "1rem" }}>📅 Citas</h2>
+            <div style={{ display: "flex", gap: "8px", marginBottom: "1rem", flexWrap: "wrap" }}>
+              {[
+                ["proximas", "Pr\u00f3ximas"],
+                ["pasadas", "Anteriores"],
+                ["todas", "Todas"],
+              ].map(([id, label]) => (
+                <button
+                  key={id}
+                  className={"midoc-chip" + (agendaVista === id ? " active" : "")}
+                  onClick={() => setAgendaVista(id)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            {agendaMsg && <div style={{ color: "#b45309", fontSize: "13px", marginBottom: "10px" }}>{agendaMsg}</div>}
+            {agendaVisible().length === 0 ? (
+              <div style={{ textAlign: "center", padding: "2rem", color: "#6b7280" }}>No hay citas en esta vista.</div>
+            ) : (
+              agendaVisible().map((c) => {
+                const pac = nombresPac[c.paciente_id];
+                return (
+                  <div
+                    key={c.id}
+                    style={{
+                      background: "#ffffff",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "10px",
+                      padding: "1rem",
+                      marginBottom: "8px",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      gap: "12px",
+                      flexWrap: "wrap",
+                      opacity: c.estado === "cancelada" ? 0.6 : 1,
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontWeight: 600 }}>{pac ? pac.nombre : "Paciente"}</div>
+                      <div style={{ fontSize: "13px", color: "#6b7280" }}>
+                        {c.fecha_hora ? new Date(c.fecha_hora).toLocaleString("es-MX") : ""} - {c.modalidad === "en_linea" ? "En l\u00ednea" : "Presencial"}
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+                      <div style={{ fontWeight: 600, color: "#1f7a63" }}>{c.monto != null ? "$" + c.monto + " MXN" : ""}</div>
+                      <select
+                        value={c.estado || "pendiente"}
+                        onChange={(e) => actualizarCita(c.id, { estado: e.target.value })}
+                        style={{ padding: "6px", borderRadius: "6px", border: "1px solid #d1d5db" }}
+                      >
+                        <option value="pendiente">Pendiente</option>
+                        <option value="confirmada">Confirmada</option>
+                        <option value="completada">Completada</option>
+                        <option value="cancelada">Cancelada</option>
+                      </select>
+                      <button className="midoc-chip" onClick={() => actualizarCita(c.id, { pagado: !c.pagado })}>
+                        {c.pagado ? "Pagada" : "Marcar pagada"}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        )}
+
+        {tab === "agendar" && (
+          <div>
+            <h2 style={{ fontSize: "18px", fontWeight: "600", marginBottom: "1rem" }}>📅 Agendar cita</h2>
             <div
           style={{
             background: "white",
